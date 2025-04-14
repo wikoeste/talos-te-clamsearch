@@ -16,7 +16,7 @@ def dropsig(sid):
         print(str(cnt)+". "+o)
         cnt+=1
     print("N or n to Exit")
-    print("==============")
+    print("================")
     reason   = input("Option: ")
     if reason == "n" or reason == "N":
         pass
@@ -46,16 +46,6 @@ def dropsig(sid):
             ]
             err = AsciiTable(error)
             print(err.table)
-    '''
-    # Try to get the FP list for review
-    r = requests.get(settings.sigmgr+"/v1/signature/review/list",headers=headers,verify=False)
-    if r.status_code == 200:
-        rjson = r.json()
-        print(json.dumps(rjson, indent=2))
-    else:
-        print("HTTP ERR {}".format(r.status_code))
-        print(r.text)
-    '''
 
 # Search for ClamAV and Amp hits by SHA256 or SampleID (sid)
 # this still uses search01.vrt.sourcefire
@@ -103,11 +93,9 @@ def searchvrt(sample):
             ftype = rjson["current_mimetype"]
         except KeyError:
             ftype = "Unknown"
-        #Print the results from Search01
-        #print(s256,sid,updated,clamhits,amphits,origin)
 
+        #Print the results from Search01
         data = [
-            #["VRT Search01 Results"],
             ["S256: " + s256],
             ["SampleID: " + sid],
             ["Updated: " + updated],
@@ -116,20 +104,18 @@ def searchvrt(sample):
             ["ClamAV: " + clamhits],
             ["Origin: " + origin]
         ]
-        res = AsciiTable(data, "VRT Search01 Results")
+        res     = AsciiTable(data, "VRT Search01 Results")
         print(res.table)
-        clamid = re.sub(r"\D","",clamhits)
-        clamid = re.sub(r"-0","",clamid)
-        #print(clamid)
-        #Drop the clam av sig found in the search
+        clamid  = re.sub(r"\D","",clamhits)
+        clamid  = re.sub(r"-0","",clamid)
+        # Drop the clam av sig found in the search
         dropsig(clamid)
     else:
         error = [["VRT Search01 API Error"],
             ["HTTP ERROR".format(response.status_code)]]
         err = AsciiTable(error)
         print(err.table)
-
-##########
+######
 #MAIN
 def main():
     shas,invalid    = ([],[])
