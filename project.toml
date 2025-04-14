@@ -3,7 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "clamSearch"
+name = "te-clamSearch"
 authors = [
     {name = "Will Koester", email = "wikoeste@cisco.com"}
 ]
