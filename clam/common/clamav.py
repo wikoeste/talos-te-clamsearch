@@ -3,6 +3,19 @@ settings.init()
 import requests, json, re
 from terminaltables import AsciiTable
 
+# list of sigs pending review
+'''
+def review():
+    headers  = {'Content-type': 'application/json','X-APIKEY': settings.sigkey}
+    url       = settings.sigmgr + "/v1/signature/review/list"
+    response  = requests.get(url, headers=headers, verify=False)
+    if response.status_code == 200:
+        rjson = response.json()
+        print(json.dumps(rjson, indent=2))
+    else:
+        print(f"HTTP ERROR {response.status_code}")
+'''
+
 # Drop the clamav signature with new sigmgr
 def dropsig(sid):
     print(f"\n\n===Drop a ClamAV SigID: {sid}===")
@@ -40,10 +53,8 @@ def dropsig(sid):
             msg = re.sub(r" at.+","",msg)
             print(msg)
         else:
-            error = [
-                ["SIG Manager API Error"],
-                ["HTTP ERROR: "+ str(response.status_code)]
-            ]
+            error = [["SIG Manager API Error"],
+                ["HTTP ERROR: "+ str(response.status_code)]]
             err = AsciiTable(error)
             print(err.table)
 
@@ -106,12 +117,11 @@ def searchvrt(sample):
         ]
         res     = AsciiTable(data, "VRT Search01 Results")
         print(res.table)
-        clamid  = re.sub(r"\D","",clamhits)
-        clamid  = re.sub(r"-0","",clamid)
+        clamid  = re.sub(r"-0|\D","",clamhits)
         # Drop the clam av sig found in the search
         dropsig(clamid)
     else:
         error = [["VRT Search01 API Error"],
-            ["HTTP ERROR".format(response.status_code)]]
+            [f"HTTP ERROR - {response.status_code}"]]
         err = AsciiTable(error)
         print(err.table)

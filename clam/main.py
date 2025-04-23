@@ -33,6 +33,8 @@ def main():
     else:
         print("The list of sha 256 entries is empty")
         print("SHAs: " +str(shas))
+    # print list of sigs pending review
+    #clamav.review()
 
 # Run Main As Program
 if __name__ == "__main__":
