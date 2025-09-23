@@ -7,7 +7,7 @@ different UIs to search and drop.
 # Release Notes
 
 0.2\
-
+updated input to access s256 and sampleids
 
 0.1\
 beta release\

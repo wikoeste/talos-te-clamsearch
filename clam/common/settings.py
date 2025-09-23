@@ -36,4 +36,4 @@ vrt          = getpass.getpass('VRT Password:')
 search01     = "https://search01.vrt.sourcefire.com/"
 sigmgr       = "https://sigmanager.talos.cisco.com/"
 sigkey       = getKey("sigmgr")
-version      = "0.1"
+version      = "0.2"

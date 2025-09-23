@@ -7,8 +7,8 @@ import re
 def main():
     shas,invalid    = ([],[])
     data            = ""
-    print("===ClamAV Signature Search Tool==="+settings.version+"===")
-    print("Input a list of valid SHA256 file hashes of SID:\n")
+    print("===[TE] ClamAV Search Tool==="+settings.version+"===")
+    print("Input a list of valid SHA256 file hashes or a Sample ID; type done\n")
     while data != 'done':
         data = input()
         # validate the input is a sha256 value if true add to list  for analysis
