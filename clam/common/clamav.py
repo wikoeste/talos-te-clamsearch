@@ -137,4 +137,4 @@ def searchvrt(sample):
                 [f"HTTP ERROR - {response.status_code}"]]
             err = AsciiTable(error)
             print(err.table)
-            menu()
+            menu.main()
