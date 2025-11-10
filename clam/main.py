@@ -1,3 +1,5 @@
+import sys
+
 from clam.common import settings,clamav
 settings.init()
 import re
@@ -21,6 +23,8 @@ def main():
         # if the input is a sig id add to list for analysis
         elif re.match(r"(.*|\d{7}|-\d{1})",data) is not None:
             shas.append(data)
+        elif data == "quit" or data == "exit":
+            sys.exit()
         else:
             invalid.append(data)
             print('Not a valid SHA256 Entry!')
