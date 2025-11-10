@@ -8,14 +8,18 @@ def main():
     shas,invalid    = ([],[])
     data            = ""
     print("===[TE] ClamAV Search Tool==="+settings.version+"===")
-    print("Input a list of valid SHA256 file hashes or a Sample ID; type done\n")
+    print("Input a list of valid SHA256 file hashes,SampleID's, or SignatureIDs; "
+          "type 'done' and press return.\n")
     while data != 'done':
         data = input()
         # validate the input is a sha256 value if true add to list  for analysis
         if re.findall(r"([A-Fa-f0-9]{64})", data) is not None:
             shas.append(data)
-        # if the input is a sid add to list for analysis
+        # if the input is a sample id add to list for analysis
         elif re.findall(r"(\d{11})",data) is not None:
+            shas.append(data)
+        # if the input is a sig id add to list for analysis
+        elif re.match(r"(.*|\d{7}|-\d{1})",data) is not None:
             shas.append(data)
         else:
             invalid.append(data)

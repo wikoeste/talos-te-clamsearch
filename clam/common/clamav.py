@@ -1,6 +1,7 @@
 from clam.common import settings
+from clam import main as menu
 settings.init()
-import requests, json, re
+import requests,json,re,subprocess
 from terminaltables import AsciiTable
 
 # list of sigs pending review
@@ -61,67 +62,79 @@ def dropsig(sid):
 # Search for ClamAV and Amp hits by SHA256 or SampleID (sid)
 # this still uses search01.vrt.sourcefire
 def searchvrt(sample):
-    url      = settings.search01+"sample/"+sample
-    response = requests.get(url, auth =(settings.uname,settings.vrt),verify=False)
-    if response.status_code == 200:
-        rjson = response.json()
-        #print(json.dumps(rjson, indent=2))
-        sid              = 0
-        s256,ftype       = (None,None)
-        fireamp,clam     = ([],[])
-        amphits,clamhits = (None,None)
-        # get AMP detection
-        if len(rjson["fireamp_detection"]["current"]) == 0:
-            amphits = "None"
-        else:
-            [fireamp.append(i) for i in rjson["fireamp_detection"]["current"]]
-            amphits = "\n".join(i for i in fireamp)
-        # get clam detection
-        if len(rjson["clamav_detection"]["current"]) == 0:
-            clamhits = "None"
-        else:
-            [clam.append(i) for i in rjson["clamav_detection"]["current"]]
-            clamhits = "\n".join(i for i in clam)
-        # get the sid
-        if "sample_id" in json.dumps(rjson):
-            sid = rjson["sample_id"]
-        else:
-            sid = "None"
-        if "updated" in json.dumps(rjson):
-            updated = rjson["updated"]
-            updated = re.sub(r"T|Z","",updated)
-        else:
-            updated = "None"
+    match = re.match("\d{7}\-",sample)
+    if match:
+        #get clam sig data from sigtools
+        cmd     = f"/usr/local/bin/sigtool --find-sigs={sample}"
         try:
-            origin = rjson["origin"]
-        except KeyError:
-            origin = "None"
-        try:
-            s256 = rjson["SHA256"]
-        except KeyError:
-            s256 = "None"
-        try:
-            ftype = rjson["current_mimetype"]
-        except KeyError:
-            ftype = "Unknown"
-
-        #Print the results from Search01
-        data = [
-            ["S256: " + s256],
-            ["SampleID: " + sid],
-            ["Updated: " + updated],
-            ["File Type: "+ ftype],
-            ["AmpDections: " + amphits],
-            ["ClamAV: " + clamhits],
-            ["Origin: " + origin]
-        ]
-        res     = AsciiTable(data, "VRT Search01 Results")
-        print(res.table)
-        clamid  = re.sub(r"-0|\D","",clamhits)
-        # Drop the clam av sig found in the search
-        dropsig(clamid)
+            res     = subprocess.run(cmd,capture_output=True,text=True,check=True)
+            filtres = re.sub(r"\[.*\]|;.*",'',res)
+            print(filtres)
+        except:
+            print("Error with sigtool.")
     else:
-        error = [["VRT Search01 API Error"],
-            [f"HTTP ERROR - {response.status_code}"]]
-        err = AsciiTable(error)
-        print(err.table)
+        url      = settings.search01+"sample/"+sample
+        response = requests.get(url, auth =(settings.uname,settings.vrt),verify=False)
+        if response.status_code == 200:
+            rjson = response.json()
+            #print(json.dumps(rjson, indent=2))
+            sid              = 0
+            s256,ftype       = (None,None)
+            fireamp,clam     = ([],[])
+            amphits,clamhits = (None,None)
+            # get AMP detection
+            if len(rjson["fireamp_detection"]["current"]) == 0:
+                amphits = "None"
+            else:
+                [fireamp.append(i) for i in rjson["fireamp_detection"]["current"]]
+                amphits = "\n".join(i for i in fireamp)
+            # get clam detection
+            if len(rjson["clamav_detection"]["current"]) == 0:
+                clamhits = "None"
+            else:
+                [clam.append(i) for i in rjson["clamav_detection"]["current"]]
+                clamhits = "\n".join(i for i in clam)
+            # get the sid
+            if "sample_id" in json.dumps(rjson):
+                sid = rjson["sample_id"]
+            else:
+                sid = "None"
+            if "updated" in json.dumps(rjson):
+                updated = rjson["updated"]
+                updated = re.sub(r"T|Z","",updated)
+            else:
+                updated = "None"
+            try:
+                origin = rjson["origin"]
+            except KeyError:
+                origin = "None"
+            try:
+                s256 = rjson["SHA256"]
+            except KeyError:
+                s256 = "None"
+            try:
+                ftype = rjson["current_mimetype"]
+            except KeyError:
+                ftype = "Unknown"
+
+            #Print the results from Search01
+            data = [
+                ["S256: " + s256],
+                ["SampleID: " + sid],
+                ["Updated: " + updated],
+                ["File Type: "+ ftype],
+                ["AmpDections: " + amphits],
+                ["ClamAV: " + clamhits],
+                ["Origin: " + origin]
+            ]
+            res     = AsciiTable(data, "VRT Search01 Results")
+            print(res.table)
+            clamid  = re.sub(r"-0|\D","",clamhits)
+            # Drop the clam av sig found in the search
+            dropsig(clamid)
+        else:
+            error = [["VRT Search01 API Error"],
+                [f"HTTP ERROR - {response.status_code}"]]
+            err = AsciiTable(error)
+            print(err.table)
+            menu()

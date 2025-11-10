@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='talos-te-clamSearch',
-    version='0.2',
+    version='0.3',
     packages=["clam", "clam.common"],
     description='TE ClamAV Search & Drop Tool',
     author='Will Koester',
