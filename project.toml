@@ -19,7 +19,8 @@ dependencies = [
     "getpass",
     "json",
     ",subprocess",
-    "terminaltables"
+    "terminaltables",
+    "setup"
 ]
 
 [project.scripts]

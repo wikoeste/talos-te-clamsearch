@@ -1,8 +1,6 @@
-import sys
-
+import sys,re
 from clam.common import settings,clamav
 settings.init()
-import re
 
 ######
 #MAIN
@@ -10,7 +8,7 @@ def main():
     shas,invalid    = ([],[])
     data            = ""
     print("===[TE] ClamAV Search Tool==="+settings.version+"===")
-    print("Input a list of valid SHA256 file hashes,SampleID's, or SignatureIDs; "
+    print("Input a list of valid SHA256 file hashes,SampleID's,or SignatureIDs; "
           "type 'done' and press return.\n")
     while data != 'done':
         data = input()
