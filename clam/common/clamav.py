@@ -1,7 +1,7 @@
 from clam.common import settings
 from clam import main as menu
 settings.init()
-import requests,json,re,subprocess
+import requests,json,re,subprocess,os
 from terminaltables import AsciiTable
 
 # list of sigs pending review
@@ -66,12 +66,19 @@ def searchvrt(sample):
     if match:
         #get clam sig data from sigtools
         cmd     = f"/usr/local/bin/sigtool --find-sigs={sample}"
-        try:
-            res     = subprocess.run(cmd,capture_output=True,text=True,check=True)
-            filtres = re.sub(r"\[.*\]|;.*",'',res)
-            print(filtres)
-        except:
-            print("Error with sigtool.")
+        if os.path.isfile("/usr/local/bin/sigtool"):
+            try:
+                res     = subprocess.run(cmd,capture_output=True,text=True,check=True)
+                filtres = re.sub(r"\[.*\]|;.*",'',res)
+                print("==ClamAV Sigtool Results==")
+                print(filtres)
+            except:
+                print("==ClamAV Sigtool Results==")
+                print("Error with sigtool.")
+        else:
+            print("==ClamAV Sigtool Results==")
+            print("Sigtool not installed.")
+            menu.main()
     else:
         url      = settings.search01+"sample/"+sample
         response = requests.get(url, auth =(settings.uname,settings.vrt),verify=False)
