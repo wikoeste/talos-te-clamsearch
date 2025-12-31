@@ -62,7 +62,8 @@ def dropsig(sid):
 # Search for ClamAV and Amp hits by SHA256 or SampleID (sid)
 # this still uses search01.vrt.sourcefire
 def searchvrt(sample):
-    match = re.match("\d{7}\-",sample)
+    #match = re.match("\d{7}\-",sample)
+    match  = re.match("[A-Za-z.]|\\d{7}\\-\\d",sample)     # clam sample id or rulename via regex
     if match:
         #get clam sig data from sigtools
         cmd     = f"/usr/local/bin/sigtool --find-sigs={sample}"
@@ -100,7 +101,7 @@ def searchvrt(sample):
                 clamhits = "None"
             else:
                 [clam.append(i) for i in rjson["clamav_detection"]["current"]]
-                clamhits = "\n".join(i for i in clam)
+                clamhits = "\n".join(i for i in clam)`
             # get the sid
             if "sample_id" in json.dumps(rjson):
                 sid = rjson["sample_id"]

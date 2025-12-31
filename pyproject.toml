@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools<81", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "talos-te-clamSearch"
+authors = [
+    {name = "Will Koester", email = "wikoeste@cisco.com"}
+]
+description = "Clam AV Sig Search & Drop Tool"
+version = "0.4"
+readme = "README.md"
+
+[project.urls]
+Repository = "https://github.com/cisco-sbg/talos-te-clamsearch/"
+
+[project.scripts]
+talos-te-clamSearch = "main:main"
